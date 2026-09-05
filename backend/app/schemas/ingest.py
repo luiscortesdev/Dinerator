@@ -3,7 +3,7 @@ from typing import Annotated, Any
 from annotated_types import Ge
 from pydantic import BaseModel, BeforeValidator, StringConstraints
 
-from models.enums import MealPeriod
+from app.models.enums import MealPeriod
 
 def empty_str_to_none(v: Any) -> Any:
     if isinstance(v, str) and not v.strip():
@@ -21,17 +21,16 @@ Str255 = Annotated[str, StringConstraints(strip_whitespace=True, max_length=255)
 Str500 = Annotated[str, StringConstraints(strip_whitespace=True, max_length=500)]
 NonNegativeInt = Annotated[int, Ge(0)]
 
-NullableStr100 = Annotated[str | None, BeforeValidator(empty_str_to_none), StringConstraints(strip_whitespace=True, max_length=100)]
-NullableStr255 = Annotated[str | None, BeforeValidator(empty_str_to_none), StringConstraints(strip_whitespace=True, max_length=255)]
-NullableStr500 = Annotated[str | None, BeforeValidator(empty_str_to_none), StringConstraints(strip_whitespace=True, max_length=500)]
+# Fixed Nullable Types
+NullableStr100 = Annotated[Str100 | None, BeforeValidator(empty_str_to_none)]
+NullableStr255 = Annotated[Str255 | None, BeforeValidator(empty_str_to_none)]
+NullableStr500 = Annotated[Str500 | None, BeforeValidator(empty_str_to_none)]
 
 class LocationScheduleIngest(BaseModel):
     external_id: Str255
     name: Str255
-
     start_time: time | None = None
     end_time: time | None = None
-
 
 class DishIngest(BaseModel):
     external_id: Str255
@@ -40,7 +39,7 @@ class DishIngest(BaseModel):
     ingredients: NullableStr500 = None
     calories: NonNegativeInt | None = None
     portion: NullableStr255 = None
-    
+
     period: Annotated[MealPeriod, BeforeValidator(normalize_enum_str)]
     station: Str255 = "General"
 
@@ -49,10 +48,8 @@ class LocationIngest(BaseModel):
     name: Str255
     description: NullableStr500 = None
     location_type: NullableStr100 = None
-    
     schedules: list[LocationScheduleIngest] = []
     dishes: list[DishIngest] = []
-
 
 class DailyMenuIngestPayload(BaseModel):
     served_date: date
