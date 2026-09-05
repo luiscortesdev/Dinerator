@@ -2,7 +2,7 @@ CREATE TYPE meal_period AS ENUM ('breakfast', 'lunch', 'dinner', 'late_night');
 
 CREATE TABLE locations (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
-    external_id VARCHAR(255) NOT NULL,
+    external_id VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
     description VARCHAR(500) NULL,
     location_type VARCHAR(100) NULL,
@@ -12,7 +12,7 @@ CREATE TABLE locations (
 CREATE TABLE location_schedules (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     location_id UUID NOT NULL REFERENCES locations(id) ON DELETE CASCADE,
-    external_id VARCHAR(255) NOT NULL,
+    external_id VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
     start_time TIME NULL, 
     end_time TIME NULL,
@@ -22,7 +22,7 @@ CREATE TABLE location_schedules (
 CREATE TABLE dishes (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     location_id UUID NOT NULL REFERENCES locations(id) ON DELETE CASCADE,
-    external_id VARCHAR(255) NOT NULL,
+    external_id VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
     description VARCHAR(500) NULL,
     ingredients VARCHAR(500) NULL,
