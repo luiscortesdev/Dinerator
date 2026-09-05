@@ -14,8 +14,8 @@ CREATE TABLE location_schedules (
     location_id UUID NOT NULL REFERENCES locations(id) ON DELETE CASCADE,
     external_id VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
-    start_time TIME NOT NULL, 
-    end_time TIME NOT NULL,
+    start_time TIME NULL, 
+    end_time TIME NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
