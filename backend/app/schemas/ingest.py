@@ -1,8 +1,9 @@
 from datetime import date, time
-from enum import Enum
 from typing import Annotated, Any
 from annotated_types import Ge
 from pydantic import BaseModel, BeforeValidator, StringConstraints
+
+from models.enums import MealPeriod
 
 def empty_str_to_none(v: Any) -> Any:
     if isinstance(v, str) and not v.strip():
@@ -23,12 +24,6 @@ NonNegativeInt = Annotated[int, Ge(0)]
 NullableStr100 = Annotated[str | None, BeforeValidator(empty_str_to_none), StringConstraints(strip_whitespace=True, max_length=100)]
 NullableStr255 = Annotated[str | None, BeforeValidator(empty_str_to_none), StringConstraints(strip_whitespace=True, max_length=255)]
 NullableStr500 = Annotated[str | None, BeforeValidator(empty_str_to_none), StringConstraints(strip_whitespace=True, max_length=500)]
-
-class MealPeriod(str, Enum):
-    BREAKFAST = "breakfast"
-    LUNCH = "lunch"
-    DINNER = "dinner"
-    LATE_NIGHT = "late_night"
 
 class LocationScheduleIngest(BaseModel):
     external_id: Str255
