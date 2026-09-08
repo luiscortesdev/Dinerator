@@ -20,7 +20,7 @@ async def submit_dish_rating(
     if not x_client_id or len(x_client_id.strip()) < 10:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Missing or invalid client identifier header (X-Client-Id)",
+            detail="Missing or invalid client identifier header (X-Client-Id)"
         )
 
     dish_exists = await db.scalar(
