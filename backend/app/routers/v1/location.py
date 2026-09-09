@@ -24,3 +24,13 @@ async def get_all_locations(
     locations = (await db.scalars(query)).all()
     
     return locations
+
+@router.get("/{location_id}")
+async def get_location(
+    location_id: str,
+    x_client_id: Annotated[str | None, Header(description="Anonymous client UUID from localStorage")] = None,
+    db: AsyncSession = Depends(get_db)
+):
+    return {
+        "detail": location_id
+    }
