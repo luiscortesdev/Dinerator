@@ -1,11 +1,13 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.routers.deps import get_db
 from app.models.dining import Location
 from app.schemas.location import LocationRead
+from app.schemas.location import LocationReadWithMenu
 
 router = APIRouter()
 
@@ -25,13 +27,24 @@ async def get_all_locations(
     
     return locations
 
-@router.get("/{location_id}")
+@router.get("/{location_id}", response_model=LocationReadWithMenu, status_code=status.HTTP_200_OK)
 async def get_location(
     location_id: str,
     x_client_id: Annotated[str | None, Header(description="Anonymous client UUID from localStorage")] = None,
     db: AsyncSession = Depends(get_db)
 ):
-    return {
-        "detail": location_id,
-        "x-client-id": x_client_id
-    }
+    if not x_client_id or len(x_client_id.strip()) < 10:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Missing or invalid client identifier header (X-Client-Id)"
+        )
+        
+    location_query = select(Location).where(
+            Location.id == location_id
+        ).options(
+            selectinload(Location.daily_menu_dishes)
+        )
+    
+    location = (await db.scalar(location_query))
+    
+    return location
