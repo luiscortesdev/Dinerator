@@ -52,6 +52,7 @@ CREATE TABLE ratings (
     score SMALLINT NOT NULL CHECK (score >= 1 AND score <= 10),
     client_id VARCHAR(255),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT unique_user_daily_rating UNIQUE (daily_menu_dishes_id, client_id)
 );
 
