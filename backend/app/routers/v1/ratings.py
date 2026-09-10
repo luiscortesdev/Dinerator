@@ -44,7 +44,7 @@ async def submit_dish_rating(
             constraint="unique_user_daily_rating",
             set_={
                 "score": payload.score,
-                "created_at": func.now(),
+                "updated_at": func.now(),
             },
         )
     )
