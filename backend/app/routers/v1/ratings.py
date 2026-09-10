@@ -6,12 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.routers.deps import get_db
 from app.models.dining import DailyMenuDish, Rating
-from app.schemas.ratings import CreateRatingRequest, RatingResponse
+from app.schemas.ratings import CreateRatingRequest, CreateRatingResponse
 
 router = APIRouter()
 
 # submit or update rating post endpoint
-@router.post("", response_model=RatingResponse, status_code=status.HTTP_200_OK)
+# edit schema to have updated_at column for ratings. on updates should set that column.
+@router.post("", response_model=CreateRatingResponse, status_code=status.HTTP_200_OK)
 async def submit_dish_rating(
     payload: CreateRatingRequest,
     x_client_id: Annotated[str | None, Header(description="Anonymous client UUID from localStorage")] = None,
@@ -59,7 +60,7 @@ async def submit_dish_rating(
     stats_res = (await db.execute(stats_query)).one()
     new_avg, total_votes = stats_res
 
-    return RatingResponse(
+    return CreateRatingResponse(
         status="success",
         dish_id=payload.daily_menu_dishes_id,
         user_score=payload.score,
