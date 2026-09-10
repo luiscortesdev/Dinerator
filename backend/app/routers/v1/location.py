@@ -32,5 +32,6 @@ async def get_location(
     db: AsyncSession = Depends(get_db)
 ):
     return {
-        "detail": location_id
+        "detail": location_id,
+        "x-client-id": x_client_id
     }
